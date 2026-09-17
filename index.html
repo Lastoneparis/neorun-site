@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neorun 3D: Overdrive — score by the near miss</title>
+<meta name="description" content="A three-lane arcade runner that pays you for how close you pass, not how far you get. Free, offline, no account.">
+<style>
+:root{--void:#05060f;--panel:#0b0d1c;--cy:#22e4ff;--mg:#ff3ea5;--gold:#ffd166;--ink:#eaf2ff;--dim:#7d88b0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ink);font:16px/1.65 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+.hero{position:relative;min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding:0 24px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:auto 0 0 0;height:46%;
+ background:
+  repeating-linear-gradient(to right,rgba(34,228,255,.22) 0 1px,transparent 1px 64px),
+  repeating-linear-gradient(to bottom,rgba(255,62,165,.20) 0 1px,transparent 1px 44px),
+  linear-gradient(to top,#1b0b2e,transparent);
+ transform:perspective(320px) rotateX(62deg);transform-origin:bottom;pointer-events:none}
+.hero::after{content:"";position:absolute;left:50%;top:14%;width:min(560px,86vw);aspect-ratio:1;translate:-50% 0;
+ background:radial-gradient(circle,rgba(255,62,165,.30),transparent 62%);filter:blur(8px);pointer-events:none}
+.hin{position:relative;max-width:60rem;margin:0 auto;width:100%}
+.tag{font:700 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.42em;color:var(--cy);text-transform:uppercase}
+h1{margin:22px 0 0;font-size:clamp(40px,10vw,92px);line-height:.94;letter-spacing:-.045em;font-weight:800;
+ background:linear-gradient(96deg,var(--cy),#fff 44%,var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{margin-top:22px;max-width:34ch;font-size:clamp(17px,2.4vw,21px);color:var(--dim)}
+.lede b{color:var(--ink);font-weight:600}
+.cta{margin-top:38px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;padding:14px 26px;border-radius:999px;background:linear-gradient(96deg,var(--mg),#a23bff);
+ color:#fff;font-weight:700;text-decoration:none;font-size:15px;box-shadow:0 0 36px rgba(255,62,165,.42)}
+.btn.ghost{background:none;border:1px solid rgba(125,136,176,.45);box-shadow:none;color:var(--dim);font-weight:600}
+/* numbers strip */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));border-top:1px solid #16193a;border-bottom:1px solid #16193a}
+.strip div{padding:26px 22px;border-right:1px solid #16193a}
+.strip div:last-child{border-right:0}
+.n{font:800 34px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--gold);letter-spacing:-.03em}
+.strip p{margin-top:7px;font-size:12.5px;color:var(--dim);letter-spacing:.04em;text-transform:uppercase}
+.wrap{max-width:60rem;margin:0 auto;padding:0 24px}
+section{padding:78px 0}
+h2{font-size:clamp(24px,4.2vw,34px);letter-spacing:-.03em;font-weight:750;margin-bottom:12px}
+.sub{color:var(--dim);max-width:56ch;margin-bottom:34px}
+/* lanes */
+.lanes{display:grid;gap:14px}
+.lane{display:grid;grid-template-columns:78px 1fr;gap:20px;align-items:start;padding:22px;border-radius:14px;
+ background:linear-gradient(100deg,var(--panel),transparent 70%);border-left:2px solid var(--cy)}
+.lane:nth-child(2){border-left-color:var(--mg)}
+.lane:nth-child(3){border-left-color:var(--gold)}
+.lane:nth-child(4){border-left-color:#a23bff}
+.lane .k{font:800 15px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--cy);padding-top:3px}
+.lane:nth-child(2) .k{color:var(--mg)} .lane:nth-child(3) .k{color:var(--gold)} .lane:nth-child(4) .k{color:#c08bff}
+.lane b{display:block;font-weight:650;margin-bottom:5px}
+.lane span{color:var(--dim);font-size:15px}
+/* fairness list */
+.rules{list-style:none;counter-reset:r}
+.rules li{counter-increment:r;padding:17px 0 17px 46px;border-bottom:1px solid #16193a;color:var(--dim);position:relative;font-size:15.5px}
+.rules li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;top:17px;
+ font:700 13px ui-monospace,Menlo,monospace;color:var(--cy)}
+.rules li:last-child{border-bottom:0}
+.rules b{color:var(--ink);font-weight:640}
+.honest{border:1px dashed #2a2f57;border-radius:14px;padding:26px;color:var(--dim)}
+.honest b{color:var(--ink)}
+.honest ul{margin:12px 0 0 18px}
+.honest li{margin-bottom:7px;font-size:15px}
+footer{border-top:1px solid #16193a;padding:34px 24px 60px;color:var(--dim);font-size:13.5px;text-align:center}
+footer a{color:var(--cy)}
+a.controls-k{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="hero"><div class="hin">
+  <div class="tag">Arcade runner · iPhone &amp; iPad</div>
+  <h1>Score by the<br>near miss.</h1>
+  <p class="lede">Distance is not the score. <b>Proximity is.</b> A second sensor rides beside your craft — clear a wall by inches and the multiplier climbs. Play it safe and the score barely moves.</p>
+  <div class="cta">
+    <a class="btn" href="https://apps.apple.com/app/id6788553936">Get Neorun 3D</a>
+    <a class="btn ghost" href="support.html">Support</a>
+  </div>
+</div></div>
+
+<div class="strip">
+  <div><div class="n">&times;9</div><p>Multiplier ceiling</p></div>
+  <div><div class="n">3.2s</div><p>Before it collapses</p></div>
+  <div><div class="n">23</div><p>Craft to unlock</p></div>
+  <div><div class="n">14</div><p>Worlds in rotation</p></div>
+  <div><div class="n">0</div><p>Bytes that leave</p></div>
+</div>
+
+<div class="wrap">
+<section>
+  <h2>The margin is the mechanic</h2>
+  <p class="sub">Everything in Neorun is built around one number that you can only raise by taking a risk you could have avoided.</p>
+  <div class="lanes">
+    <div class="lane"><div class="k">+1</div><div><b>A near miss registers</b><span>An obstacle passes through the sensor beside you — not through you. The multiplier steps up.</span></div></div>
+    <div class="lane"><div class="k">&minus;ALL</div><div><b>It decays</b><span>Go 3.2 seconds without another one and it collapses straight back to &times;1. You cannot bank it.</span></div></div>
+    <div class="lane"><div class="k">&times;5</div><div><b>Time dips</b><span>At five, the next near miss drops the whole world into slow motion for a beat.</span></div></div>
+    <div class="lane"><div class="k">&times;9</div><div><b>Overdrive</b><span>The camera opens up, the grade goes white-gold, trails and speed lines spike. Your best run lives here.</span></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Fair by design — written into the generator</h2>
+  <p class="sub">A runner that kills you with an impossible row is not hard, it is broken. These four rules are constraints in the level generator, not promises in a description.</p>
+  <ol class="rules">
+    <li><b>Every row leaves one clear lane</b>, and it is never more than one lane away from where you already are. No double lane change is ever required.</li>
+    <li><b>A "jump or slide" row never follows another one</b>, so there is always reaction time between the two reflexes.</li>
+    <li><b>Powerups only drop on the guaranteed-clear lane.</b> A pickup is never bait.</li>
+    <li><b>The opening stretch of every run is spawn-free</b> while you settle into the speed.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>The same track for everyone, every day</h2>
+  <p class="sub">The Daily Challenge is generated from the calendar date, so every player in the world runs the identical obstacle sequence that day. Three daily missions rotate alongside it and pay out the moment you cross the line — there is no "tap to claim". Come back tomorrow and the streak flame grows.</p>
+  <h2 style="font-size:20px;margin-top:10px">Controls</h2>
+  <p class="sub" style="margin-bottom:0">Swipe left or right to change lane, up to jump, down to slide. That is the entire control scheme — there is nothing else to learn.</p>
+</section>
+
+<section>
+  <h2>Honest about the limits</h2>
+  <div class="honest">
+    <b>What Neorun 3D does not do:</b>
+    <ul>
+      <li>No cloud saves. Your best score lives on the device and travels in an encrypted iPhone backup — it does not sync between two phones in use at once.</li>
+      <li>No multiplayer. The Daily Challenge is a shared track, not a live race.</li>
+      <li>Prisms picked up while running are the only currency. Nothing in the shop can be bought with money except removing ads.</li>
+      <li>Removing ads is one purchase, once. There is no subscription and there never will be.</li>
+    </ul>
+  </div>
+</section>
+</div>
+
+<footer>
+  <a href="support.html">Support</a> &middot; <a href="privacy.html">Privacy</a> &middot;
+  <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of Use</a><br><br>
+  &copy; 2026 Hugo Moriceau &middot; hugomoriceau@icloud.com
+</footer>
+</body>
+</html>
